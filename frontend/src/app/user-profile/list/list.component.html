@@ -1,0 +1,88 @@
+<h1>Profile</h1>
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="form-row">
+        <div class="form-group col">
+            <label for="age">Age</label>
+            <input type="text" formControlName="age" class="form-control"
+                [ngClass]="{'is-invalid': submitted && f.age.errors }" />
+            <div *ngIf="submitted && f.age.errors" class="invalid-feedback">
+                <div *ngIf="f.age.errors?.pattern">age need to be a number</div>
+            </div>
+        </div>
+        <div class="form-group col">
+            <label for="famille">famille</label>
+            <input type="text" formControlName="famille" class="form-control" />
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col">
+            <label for="race">race</label>
+            <input type="text" formControlName="race" class="form-control" />
+
+        </div>
+        <div class="form-group col">
+            <label for="nourriture">nourriture</label>
+            <input type="text" formControlName="nourriture" class="form-control" />
+
+        </div>
+    </div>
+    <div class="form-group">
+        <button [disabled]="loading" class="btn btn-primary">
+            <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+            Save
+        </button>
+
+    </div>
+</form>
+
+<form [formGroup]="amiform" (ngSubmit)="friend($event)">
+    <div class="form-row">
+        <div class="form-group col">
+            <label for="email">Add/remove friend by email</label>
+            <input type="email" formControlName="email" class="form-control"
+                [ngClass]="{'is-invalid': asubmitted && f2.email.errors }" />
+            <div *ngIf="asubmitted && f2.email.errors" class="invalid-feedback">
+                <div *ngIf="f2.email.errors?.required">email required</div>
+            </div>
+            <div *ngIf="asubmitted && f2.email.errors" class="invalid-feedback">
+                <div *ngIf="f2.email.errors?.pattern">invalid email</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+
+        <button [disabled]="aloading" class="btn btn-primary" name="add">
+            <span *ngIf="aloading" class="spinner-border spinner-border-sm mr-1"></span>
+            Add
+        </button>
+
+        <button [disabled]="rloading" class="btn btn-light" name="delete">
+            <span *ngIf="rloading" class="spinner-border spinner-border-sm mr-1"></span>
+            remove
+        </button>
+
+
+    </div>
+</form>
+
+<div>
+    <h2>Liste d'amis</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+
+                <th>Email</th>
+
+            </tr>
+        </thead>
+        <tbody *ngIf="user">
+            <tr *ngFor="let friend of user.friends">
+
+                <td>{{friend.email}}</td>
+
+            </tr>
+
+        </tbody>
+    </table>
+</div>
