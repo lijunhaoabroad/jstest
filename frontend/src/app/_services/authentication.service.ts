@@ -49,6 +49,15 @@ export class AuthenticationService {
 
   }
 
+  getNon() {
+    return this.http.get<any>(`${environment.API_URL}/nonami/`).pipe(map(data => {
+      //   localStorage.setItem('user', JSON.stringify(user));
+      // this.userSubject.next(user);
+
+      return data;
+    }));
+  }
+
 
   register(user) {
     return this.http.post<any>(`${environment.API_URL}/register/`, user).pipe(map(user => {

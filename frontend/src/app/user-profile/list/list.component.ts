@@ -22,7 +22,9 @@ export class ListComponent implements OnInit {
   rloading = false;
   submitted = false;
   asubmitted = false;
-  user: User;;
+  user: User;
+  non_ami: User;
+
 
   constructor(
     private formBuilder: FormBuilder,
@@ -60,6 +62,8 @@ export class ListComponent implements OnInit {
       this.f.race.setValue(this.user.race);
 
     }
+
+    this.getNonAmi();
 
 
 
@@ -102,6 +106,32 @@ export class ListComponent implements OnInit {
 
   }
 
+  getNonAmi() {
+    this.authService.getNon()
+      .pipe(first())
+      .subscribe(
+        data => {
+
+          //    this.alertService.success(' friend successful', { keepAfterRouteChange: true });
+          this.router.navigate(['..', { relativeTo: this.route }]);
+          //this.user = JSON.parse(localStorage.getItem('user'));
+          this.non_ami = data;
+
+
+        },
+        error => {
+          this.alertService.error(error);
+
+          //    this.aloading = false;
+        });
+  }
+
+  ajoute(obj) {
+
+    this.updateFriend(event, { email: obj.email, op: "add" });
+  }
+
+
 
   private updateUser() {
 
@@ -123,17 +153,27 @@ export class ListComponent implements OnInit {
         });
   }
 
-  private updateFriend(event) {
+  private updateFriend(event, obj = {}) {
     let op = ""
-    if (event.submitter.name == "add") {
-      op = "add";
-    }
-    else if (event.submitter.name == "delete") {
-      op = "delete";
-    }
-    this.amiform.value["op"] = op;
+    let em = "";
+    if ('op' in obj) {
+      op = obj["op"];
+      em = obj["email"];
 
-    this.authService.friendlist(this.amiform.value)
+    } else {
+      if (event.submitter.name == "add") {
+        op = "add";
+      }
+      else if (event.submitter.name == "delete") {
+        op = "delete";
+      }
+
+      em = this.amiform.value.email;
+    }
+
+
+
+    this.authService.friendlist({ op: op, email: em })
       .pipe(first())
       .subscribe(
         data => {
@@ -141,6 +181,9 @@ export class ListComponent implements OnInit {
           this.alertService.success(op + ' friend successful', { keepAfterRouteChange: true });
           this.router.navigate(['..', { relativeTo: this.route }]);
           this.user = JSON.parse(localStorage.getItem('user'));
+
+          this.getNonAmi();
+
 
         },
         error => {

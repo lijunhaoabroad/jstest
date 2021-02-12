@@ -38,6 +38,43 @@ userRoute.route('/userinfo/').put((req, res, next) => {
 })
 
 
+userRoute.route('/nonami/').get((req, res, next) => {
+
+    const token = req.cookies.jwt;
+    jwt.verify(token, config.accessTokenSecret, async (err, decodedToken) => {
+        if (err) {
+            res.locals.user = null;
+            res.cookie('jwt', '', { maxAge: 1 });
+            next();
+        } else {
+
+
+            User.findById(decodedToken.id, function (err, result) {
+                if (err) {
+                    res.status(404).json({ errors: [{ msg: err.message }] });
+                } else {
+                    let fri = result.friends;
+                    User.find({ "_id": { "$nin": [...fri, decodedToken.id] } }, function (err, re) {
+                        if (err) {
+                            res.status(404).json({ errors: [{ msg: err.message }] });
+                        } else {
+                            res.status(201).json(re);
+                        }
+
+                    }).select("-deletedAt");
+                }
+
+
+            }).select("-deletedAt");
+            //let tmp = nonami.toObject()
+            //  console.log(tmp);
+
+        }
+    });
+
+}
+)
+
 userRoute.route('/friend/').put((req, res, next) => {
     const token = req.cookies.jwt;
     jwt.verify(token, config.accessTokenSecret, async (err, decodedToken) => {
@@ -48,6 +85,7 @@ userRoute.route('/friend/').put((req, res, next) => {
         } else {
             let em = req.body.email;
             let op = req.body.op;
+
             if (op === "add") {
 
                 User.findOne({ email: em }, function (err, result) {
@@ -59,8 +97,6 @@ userRoute.route('/friend/').put((req, res, next) => {
                     } else {
                         if (decodedToken.id != result._id) {
 
-                            console.log(decodedToken.id)
-                            console.log(result._id)
 
                             User.findByIdAndUpdate(decodedToken.id, {
                                 $addToSet: { friends: result._id }

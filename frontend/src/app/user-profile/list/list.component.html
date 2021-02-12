@@ -85,4 +85,28 @@
 
         </tbody>
     </table>
+
+</div>
+<div>
+    <h2>Liste de non amis</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+
+                <th>Email</th>
+                <th>Operation</th>
+
+            </tr>
+        </thead>
+        <tbody *ngIf="non_ami">
+            <tr *ngFor="let non of non_ami">
+                <td>{{non.email}}</td>
+                <button class="btn btn-primary" name="ajouter" (click)="ajoute(non)">
+                    ajouter
+                </button>
+
+            </tr>
+
+        </tbody>
+    </table>
 </div>
